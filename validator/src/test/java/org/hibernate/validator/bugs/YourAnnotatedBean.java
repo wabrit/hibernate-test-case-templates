@@ -1,10 +1,12 @@
 package org.hibernate.validator.bugs;
 
-import javax.validation.constraints.NotNull;
-
+/**
+ * This bean exhibits the issue described in HV-1534. It has no
+ * annotated constraints; all of the constraints to be applied
+ * will be declared in the constraints xml resource file.
+*/
 public class YourAnnotatedBean {
 
-	@NotNull
 	private Long id;
 
 	private String name;

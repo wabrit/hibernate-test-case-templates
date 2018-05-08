@@ -24,15 +24,20 @@ public class YourTestCase {
 	}
 
 	@Test
-	@TestForIssue(jiraKey = "HV-NNNNN") // Please fill in the JIRA key of your issue
+	@TestForIssue(jiraKey = "HV-1534") // Please fill in the JIRA key of your issue
 	public void testYourBug() {
-		YourAnnotatedBean yourEntity1 = new YourAnnotatedBean( null, "example" );
+		// YourAnnotatedSubBean1 has no annotated or XML-espressed constraints
+		final Set<ConstraintViolation<YourAnnotatedBean>> constraintViolations1 = validator.validate( new YourAnnotatedSubBean1( 1L, null ) );
+		assertEquals( 0, constraintViolations1.size() );
 
-		Set<ConstraintViolation<YourAnnotatedBean>> constraintViolations = validator.validate( yourEntity1 );
-		assertEquals( 1, constraintViolations.size() );
+		// YourAnnotatedSubBean2 has an XML-espressed constraint, on a property of its parent class
+		// This test will fail if the test is run with pom.xml (Which specifies a hibernate validator version of 6.0.8.Final)
+		// This test will pass if the test is run with pom-HV-4.3.2.xml (Which specifies a hibernate validator version of 4.3.2.Final)
+		final Set<ConstraintViolation<YourAnnotatedBean>> constraintViolations2 = validator.validate( new YourAnnotatedSubBean2( 1L, null ) );
+		assertEquals( 1, constraintViolations2.size() );
 		assertEquals(
-				"must not be null",
-				constraintViolations.iterator().next().getMessage() );
+				"Name must be specified for YourAnnotatedSubBean2",
+				constraintViolations2.iterator().next().getMessage() );
 	}
 
 }
